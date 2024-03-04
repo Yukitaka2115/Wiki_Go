@@ -1,0 +1,30 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="GoMixedReceiverTypes" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
+    <inspection_tool class="VulnerableLibrariesLocal" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="isIgnoringEnabled" value="true" />
+      <option name="ignoredModules">
+        <list>
+          <option value="Wiki(Go Ver.)" />
+          <option value="Wiki(Go Ver.)" />
+          <option value="Wiki(Go Ver.)" />
+        </list>
+      </option>
+      <option name="ignoredPackages">
+        <list>
+          <option value="null:golang.org/x/net:v0.10.0" />
+          <option value="null:golang.org/x/crypto:v0.9.0" />
+          <option value="null:github.com/dgrijalva/jwt-go:v3.2.0+incompatible" />
+        </list>
+      </option>
+      <option name="ignoredReasons">
+        <list>
+          <option value="其他" />
+          <option value="其他" />
+          <option value="进行中" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>
