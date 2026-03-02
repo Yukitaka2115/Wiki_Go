@@ -53,10 +53,16 @@ func NewRabbitMQSimple(queueName string) *RabbitMQ {
 // Destroy 只有在程序彻底退出时才调用
 func (r *RabbitMQ) Destroy() {
 	if r.channel != nil {
-		r.channel.Close()
+		err := r.channel.Close()
+		if err != nil {
+			return
+		}
 	}
 	if r.conn != nil {
-		r.conn.Close()
+		err := r.conn.Close()
+		if err != nil {
+			return
+		}
 	}
 }
 
