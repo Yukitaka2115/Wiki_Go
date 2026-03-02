@@ -18,7 +18,10 @@ func AddComment(ctx *gin.Context) {
 	uid, _ := ctx.Get("userID")
 
 	var comment model.Comment
-	// ... 绑定 JSON ...
+	if err := ctx.ShouldBindJSON(&comment); err != nil {
+		ctx.JSON(400, gin.H{"msg": "参数格式错误", "error": err.Error()})
+		return
+	}
 	comment.UserID = int(uid.(uint))
 	service.AddComment(comment)
 
@@ -27,6 +30,12 @@ func AddComment(ctx *gin.Context) {
 		"msg":  "success",
 		"data": comment, // 直接返回结构体，前端就能看到绑定的 pageid 了
 	})
+	/*
+		todo:
+		1. 现在是直接把评论放在数据库里面了，后续可以考虑加个 MQ，评论先发 MQ，后台异步消费 MQ 来写数据库，这样就不会因为数据库慢了而影响用户体验了
+		2. 现在是没有权限校验的，后续可以在 Service 层加一个 DeleteCommentReq 结构体，里面包含评论 ID、操作人 ID 和操作人角色，然后在 Service 层做权限校验，这样就算前端恶意调用了删除接口，也只能删除自己的评论了
+		3. 软删除和权限的声明
+	*/
 }
 
 func DeleteCommentHandler(ctx *gin.Context) {

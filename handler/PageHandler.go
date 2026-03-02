@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"wiki/middleware"
 	"wiki/model"
 	"wiki/service"
 
@@ -46,7 +47,7 @@ func GetAllPage(ctx *gin.Context) {
 func GetPageByTitle(ctx *gin.Context) {
 	title := ctx.Param("title")
 	page := service.GetPageByTitle(title)
-	pageRanking := service.NewPageRanking()
+	pageRanking := middleware.NewPageRanking()
 	log.Println(page.ID)
 	err := pageRanking.IncreasePageVisit(page.ID)
 	if err == nil {

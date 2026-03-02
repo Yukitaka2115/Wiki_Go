@@ -6,6 +6,7 @@ import (
 	"log"
 	"wiki/config"
 	"wiki/dao"
+	"wiki/middleware"
 	"wiki/model"
 )
 
@@ -89,8 +90,27 @@ func DeletePageByID(id int) {
 
 func GetPageByTitle(title string) model.Page {
 	var page model.Page
-	dao.Db.Where("title = ?", title).First(&page)
+	// 查询数据库
+	result := dao.Db.Where("title = ?", title).First(&page)
+	if result.Error != nil {
+		log.Printf("未找到标题为 %s 的词条", title)
+		return page
+	}
 
+	// 只有在查到数据且 ID 合法时才增加点击量
+	if page.ID > 0 {
+		go func(pid int) {
+			ranking := middleware.NewPageRanking()
+			// 增加判断：如果 ranking.client 是 nil，直接返回，不调方法
+			if ranking.Client == nil {
+				log.Println("Redis 客户端未初始化，跳过点击量增加")
+				return
+			}
+			_ = ranking.IncreasePageVisit(pid)
+		}(page.ID)
+	}
+
+	// 3. 原有的 JSON 解析逻辑
 	if err := config.UnmarshalJSONStr(page.MaincharaStr, &page.Mainchara); err != nil {
 		log.Println("Failed to unmarshal Mainchara:", err)
 	}

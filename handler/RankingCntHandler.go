@@ -1,13 +1,14 @@
 package handler
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
-	"wiki/service"
+	"wiki/middleware"
+
+	"github.com/gin-gonic/gin"
 )
 
 func Ranking(ctx *gin.Context) {
-	ranking := service.NewPageRanking()
+	ranking := middleware.NewPageRanking()
 	dailyRanking, err := ranking.GetDailyRanking(-1)
 	if err != nil {
 		return

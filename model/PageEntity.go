@@ -12,11 +12,11 @@ type Page struct {
 	Brief        string     `json:"Brief"`
 	Background   string     `json:"Background"`
 	History      mapHandler `json:"History" gorm:"type:json"`
-	Mainchara    Chara
+	Mainchara    Chara      `gorm:"-"`
 	MaincharaStr string
-	Relatives    Chara
+	Relatives    Chara `gorm:"-"`
 	RelativesStr string
-	Team         Group
+	Team         Group `gorm:"-"`
 	TeamStr      string
 }
 
