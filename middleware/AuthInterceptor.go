@@ -1,7 +1,8 @@
-package config
+package middleware
 
 import (
 	"net/http"
+	"wiki/config"
 
 	"github.com/gin-gonic/gin"
 )
@@ -9,7 +10,7 @@ import (
 func AuthInterceptor() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 1. 调用你刚摘出来的公共方法
-		claims, err := GetClaimsFromHeader(c)
+		claims, err := config.GetClaimsFromHeader(c)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "未登录或凭证无效"})
 			c.Abort() // 必须调用 Abort，否则后面的 Handler 还会执行

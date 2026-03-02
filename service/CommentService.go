@@ -1,9 +1,12 @@
 package service
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"wiki/dao"
+	"wiki/middleware"
 	"wiki/model"
 )
 
@@ -16,19 +19,31 @@ type DeleteCommentReq struct {
 }
 
 func AddComment(c model.Comment) {
-	// 1. 直接把结构体 c 存入数据库
-	// 这里的 c 必须是字段大写开头的结构体
-	err := dao.Db.Table("comments").Create(&c).Error
+	// 1. 类型转换：把数据库模型 c 转为 MQ 传输用的结构体
+	// 假设你消费者那边解析的是 CurJsonToComment
+	msgObj := middleware.CurJsonToComment{
+		Userid:  c.UserID,  // 从 model.Comment 提取并转类型
+		Pageid:  c.PageID,  // 从 model.Comment 提取并转类型
+		Comment: c.Content, // 从 model.Comment 提取内容
+	}
 
+	// 2. 序列化为 JSON 字符串
+	msgJson, err := json.Marshal(msgObj)
 	if err != nil {
-		fmt.Println("写入失败详情:", err)
+		log.Println("JSON 序列化失败:", err)
 		return
 	}
-	fmt.Println("写入数据库成功！ID 为:", c.ID)
 
-	// 2. 如果你还想发 MQ（可选）
-	//commentStrJson, _ := json.Marshal(c)
-	// ... 发送 MQ 的逻辑
+	// 3. 定义队列名并发送
+	// 这里的 "comment_queue" 必须和你 ConsumeSimple 传入的参数一致
+	const QueueName = "comment_queue"
+	mq := middleware.NewRabbitMQSimple(QueueName)
+	fmt.Println("mq start success")
+
+	// 4. 调用你写好的发送方法
+	mq.PublishSimple(string(msgJson))
+
+	fmt.Printf("评论已入队: 用户%d 对 页面%d 的评论\n", msgObj.Userid, msgObj.Pageid)
 }
 
 // service/comment_service.go

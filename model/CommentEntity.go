@@ -6,8 +6,9 @@ import (
 
 type Comment struct {
 	gorm.Model
-	ID      uint   `gorm:"primaryKey"`
-	UserID  int    `gorm:"column:user_id"` // 显式指定列名
-	PageID  int    `gorm:"column:page_id"`
-	Content string `gorm:"column:content"`
+	// 注意：这里的 json 标签必须和你发送的测试用例 Key 大小写完全一致
+	UserID  int    `json:"UserID"`
+	PageID  int    `json:"PageID"`
+	Content string `json:"Content"`
+	//UserName string `json:"UserName"` // 如果不需要传这个，可以不写
 }
