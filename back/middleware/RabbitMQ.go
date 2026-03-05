@@ -10,7 +10,7 @@ import (
 )
 
 // MQURL 注意：如果没创建过名为 Cello 的 Virtual Host，请把最后的 /Cello 改成 /
-const MQURL = "amqp://Cello:114514@127.0.0.1:5672/Cello"
+const MQURL = "amqp://Cello:114514@host.docker.internal:5672/Cello"
 
 type RabbitMQ struct {
 	conn      *amqp.Connection

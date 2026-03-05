@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  # 你的 Go 服务
+  web-service:
+    build: .
+    ports:
+      - "8080:8088" # 电脑访问 8080 -> 容器 8088
+    depends_on:
+      - mysql
+      - rabbitmq
+    environment:
+      - DB_HOST=mysql
+      - MQ_HOST=rabbitmq
+
+  # MySQL 数据库
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wiki
+    ports:
+      - "3306:3306"
+
+  # RabbitMQ 消息队列
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672" # 管理界面

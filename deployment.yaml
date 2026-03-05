@@ -1,0 +1,37 @@
+# 1. 定义部署方案 (Deployment)
+apiVersion: apps/v1  # 必须是 v1
+kind: Deployment
+metadata:
+  name: go-service-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: go-service
+  template:
+    metadata:
+      labels:
+        app: go-service
+    spec:
+      containers:
+        - name: my-go-app
+          image: my-go-app:v2      # 确保这里用的是你重新 build 后的 v2 镜像
+          imagePullPolicy: Never    # 必须是 Never，让它用你本地 build 的镜像
+          ports:
+            - containerPort: 8088    # 对应你代码里的 8088
+
+---
+# 2. 定义访问入口 (Service)
+apiVersion: v1
+kind: Service
+metadata:
+  name: go-service-entry
+spec:
+  type: NodePort # 暴露端口，让你可以从浏览器访问
+  selector:
+    app: go-service
+  ports:
+    - protocol: TCP
+      port: 80       # 集群内部访问的端口
+      targetPort: 8088 # 容器内部 Go 服务的端口
+      nodePort: 30001  # 你在浏览器访问 localhost:30001 就能看到效果

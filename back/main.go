@@ -9,7 +9,8 @@ import (
 )
 
 func main() {
-	mq := middleware.NewRabbitMQSimple("comment_queue")
+	// Back 应从清洗后的 mq_clean 中读取，保证写库前已经经过过滤
+	mq := middleware.NewRabbitMQSimple("mq_clean")
 	go mq.ConsumeSimple() // ✅ 必须加 go，让它在后台跑
 
 	router := gin.Default()

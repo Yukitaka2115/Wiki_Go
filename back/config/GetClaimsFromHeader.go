@@ -20,8 +20,7 @@ func GetClaimsFromHeader(c *gin.Context) (map[string]interface{}, error) {
 		tokenString = authHeader[7:]
 	}
 
-	// 3. 调用你之前写好的 ExtractClaimsFromToken (解析 JWT)
-	// 这里的 ExtractClaimsFromToken 应该也是在 config 包里定义的
+	// 3. 调用包内的 ExtractClaimsFromToken (解析 JWT)
 	claims, err := ExtractClaimsFromToken(tokenString)
 	if err != nil {
 		return nil, err

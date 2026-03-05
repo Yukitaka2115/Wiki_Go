@@ -35,8 +35,8 @@ func AddComment(c model.Comment) {
 	}
 
 	// 3. 定义队列名并发送
-	// 这里的 "comment_queue" 必须和你 ConsumeSimple 传入的参数一致
-	const QueueName = "comment_queue"
+	// 这里改为发送到 mq_raw，交由外部清洗器消费并转发到 mq_clean
+	const QueueName = "mq_raw"
 	mq := middleware.NewRabbitMQSimple(QueueName)
 	fmt.Println("mq start success")
 
@@ -48,7 +48,7 @@ func AddComment(c model.Comment) {
 
 // service/comment_service.go
 
-// 1. 确保参数类型是 DeleteCommentReq
+// DeleteComment 1. 确保参数类型是 DeleteCommentReq
 func DeleteComment(req DeleteCommentReq) error {
 	var comment model.Comment
 

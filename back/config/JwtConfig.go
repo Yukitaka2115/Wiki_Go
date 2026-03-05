@@ -2,8 +2,9 @@ package config
 
 import (
 	"errors"
-	"github.com/dgrijalva/jwt-go"
 	"time"
+
+	"github.com/dgrijalva/jwt-go"
 )
 
 func CreateToken(id int, role int) (string, error) {
